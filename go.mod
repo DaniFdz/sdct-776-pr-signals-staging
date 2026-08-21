@@ -2,7 +2,10 @@ module github.com/DaniFdz/sdct-776-pr-signals-staging
 
 go 1.21
 
-require gopkg.in/DataDog/dd-trace-go.v1 v1.39.0-alpha.1.0.20240717122019-0a6bcb72ef86
+require (
+	golang.org/x/sys v0.20.0
+	gopkg.in/DataDog/dd-trace-go.v1 v1.39.0-alpha.1.0.20240717122019-0a6bcb72ef86
+)
 
 require (
 	github.com/DataDog/appsec-internal-go v1.7.0 // indirect
@@ -24,7 +27,6 @@ require (
 	github.com/tinylib/msgp v1.1.8 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	golang.org/x/mod v0.14.0 // indirect
-	golang.org/x/sys v0.20.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	golang.org/x/tools v0.16.1 // indirect
 	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028 // indirect

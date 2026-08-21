@@ -6,11 +6,11 @@ import (
 	"os"
 	"testing"
 
-	"github.com/DaniFdz/sdct-776-pr-signals-staging/internal/civisibility"
+	"github.com/DaniFdz/sdct-776-pr-signals-staging/main/civisibility/integrations/gotesting"
 )
 
 func TestMain(m *testing.M) {
-	os.Exit(civisibility.RunM(m))
+	os.Exit(gotesting.RunM(m))
 }
 
 func TestSDCT776OnboardPass(t *testing.T) {

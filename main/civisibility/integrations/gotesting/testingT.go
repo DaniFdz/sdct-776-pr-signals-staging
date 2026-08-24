@@ -179,6 +179,15 @@ func (ddt *T) Deadline() (deadline time.Time, ok bool) {
 // it cannot be used in parallel tests or tests with parallel ancestors.
 func (ddt *T) Setenv(key, value string) { (*testing.T)(ddt).Setenv(key, value) }
 
+// SetTag adds or updates a tag on the CI visibility test span.
+func (ddt *T) SetTag(key string, value interface{}) {
+	t := (*testing.T)(ddt)
+	ciTest := getCiVisibilityTest(t)
+	if ciTest != nil {
+		ciTest.SetTag(key, value)
+	}
+}
+
 func (ddt *T) getTWithError(errType string, errMessage string) *testing.T {
 	t := (*testing.T)(ddt)
 	ciTest := getCiVisibilityTest(t)

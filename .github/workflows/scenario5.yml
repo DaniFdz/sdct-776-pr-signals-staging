@@ -21,5 +21,5 @@ jobs:
           go-version: "1.21"
       - name: Run newly flaky test (fails first, passes on retry)
         run: |
-          go test -tags=sdct776 -run '^TestNewFlakyPaymentService$' -v ./sdct776/scenarios || \
-          go test -tags=sdct776 -run '^TestNewFlakyPaymentService$' -v ./sdct776/scenarios
+          go test -tags=sdct776 -run '^TestFreshFlakyCheckoutTransaction$' -v ./sdct776/scenarios || \
+          go test -tags=sdct776 -run '^TestFreshFlakyCheckoutTransaction$' -v ./sdct776/scenarios

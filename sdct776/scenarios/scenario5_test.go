@@ -9,10 +9,10 @@ import (
 	"github.com/DaniFdz/sdct-776-pr-signals-staging/main/civisibility/integrations/gotesting"
 )
 
-func TestNewFlakyPaymentService(t *testing.T) {
+func TestFreshFlakyCheckoutTransaction(t *testing.T) {
 	test := gotesting.GetTest(t)
-	if _, err := os.Stat("/tmp/flaky_payment_service.flag"); os.IsNotExist(err) {
-		_ = os.WriteFile("/tmp/flaky_payment_service.flag", []byte("1"), 0644)
+	if _, err := os.Stat("/tmp/flaky_checkout.flag"); os.IsNotExist(err) {
+		_ = os.WriteFile("/tmp/flaky_checkout.flag", []byte("1"), 0644)
 		test.Fatal("payment gateway connection reset on initial handshake")
 	}
 	test.SetTag("test.is_retry", "true")

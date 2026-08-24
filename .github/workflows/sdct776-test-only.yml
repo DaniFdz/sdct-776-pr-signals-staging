@@ -1,26 +1,30 @@
-name: SDCT-776 3B.1 no-job-context test-only failure
+name: SDCT-776 3A.3 first-time-flaky test-only failure
 
 on:
   push:
 
 jobs:
-  no-job-context:
-    name: no-job-context
+  unit-tests:
+    name: unit-tests
     runs-on: ubuntu-latest
     env:
       DD_API_KEY: ${{ secrets.DD_API_KEY }}
       DD_SITE: datad0g.com
       DD_CIVISIBILITY_AGENTLESS_ENABLED: true
       DD_SERVICE: sdct776-pr-signals
-      SDCT776_NO_JOB_CONTEXT: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
           go-version: "1.21"
-      - name: Record a failed test without CI job context
+      - name: First execution fails for the fresh test identity
         continue-on-error: true
-        # Preserve GitHub pipeline metadata but remove only the test process's job label.
-        run: env -u GITHUB_JOB go test -tags=sdct776 -run '^TestSDCT776NoJobContext$' -v ./sdct776/scenarios
+        env:
+          SDCT776_NEW_FLAKY_FAIL: '1'
+        run: go test -tags=sdct776 -run '^TestSDCT776NewRepoFreshNewFlaky$' -v ./sdct776/scenarios
+      - name: Second execution passes for the same test identity
+        env:
+          SDCT776_NEW_FLAKY_FAIL: '0'
+        run: go test -tags=sdct776 -run '^TestSDCT776NewRepoFreshNewFlaky$' -v ./sdct776/scenarios
       - name: Keep the test-only job successful
-        run: echo "The failed test has no CI job context."
+        run: echo "The first-time-flaky test failure is intentionally test-only."

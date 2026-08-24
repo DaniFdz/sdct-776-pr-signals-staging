@@ -54,3 +54,9 @@ func TestSDCT776NoJobContext(t *testing.T) {
 	}
 	gotesting.GetTest(t).Fatal("expected 3 attempts, got 1")
 }
+
+func TestSDCT776NewRepoFreshNewFlaky(t *testing.T) {
+	if os.Getenv("SDCT776_NEW_FLAKY_FAIL") == "1" {
+		gotesting.GetTest(t).Fatal("failed on 2 of 5 executions")
+	}
+}

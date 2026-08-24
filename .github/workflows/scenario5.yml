@@ -19,10 +19,8 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: "1.21"
-      - name: First execution fails for fresh test identity
+      - name: Run test suite with retry
         continue-on-error: true
         run: go test -tags=sdct776 -run '^TestNewFlakyPaymentAuth$' -v ./sdct776/scenarios
-      - name: Second execution passes for flaky test, but job is marked failed
-        run: |
-          go test -tags=sdct776 -run '^TestNewFlakyPaymentAuth$' -v ./sdct776/scenarios
-          exit 1
+      - name: Run all tests (flaky passes on retry, failing test fails)
+        run: go test -tags=sdct776 -run '^(TestNewFlakyPaymentAuth|TestPaymentCaptureFailure)$' -v ./sdct776/scenarios

@@ -9,9 +9,10 @@ import (
 	"github.com/DaniFdz/sdct-776-pr-signals-staging/main/civisibility/integrations/gotesting"
 )
 
-func TestFlakyPaymentGateway(t *testing.T) {
-	if os.Getenv("SDCT776_FLAKY_FAIL") == "1" {
-		gotesting.GetTest(t).Fatal("payment gateway connection reset by peer")
+func TestNewFlakyPaymentService(t *testing.T) {
+	if _, err := os.Stat("/tmp/flaky_payment_service.flag"); os.IsNotExist(err) {
+		_ = os.WriteFile("/tmp/flaky_payment_service.flag", []byte("1"), 0644)
+		gotesting.GetTest(t).Fatal("payment gateway connection reset on initial handshake")
 	}
-	t.Log("payment gateway transaction succeeded")
+	t.Log("payment gateway handshake succeeded on retry")
 }

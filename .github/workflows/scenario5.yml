@@ -19,12 +19,7 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: "1.21"
-      - name: First execution fails for fresh test identity
-        continue-on-error: true
-        env:
-          SDCT776_FLAKY_FAIL: '1'
-        run: go test -tags=sdct776 -run '^TestFlakyPaymentGateway$' -v ./sdct776/scenarios
-      - name: Second execution passes for the same test identity
-        env:
-          SDCT776_FLAKY_FAIL: '0'
-        run: go test -tags=sdct776 -run '^TestFlakyPaymentGateway$' -v ./sdct776/scenarios
+      - name: Run newly flaky test (fails first, passes on retry)
+        run: |
+          go test -tags=sdct776 -run '^TestNewFlakyPaymentService$' -v ./sdct776/scenarios || \
+          go test -tags=sdct776 -run '^TestNewFlakyPaymentService$' -v ./sdct776/scenarios

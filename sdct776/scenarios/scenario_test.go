@@ -20,3 +20,43 @@ func TestSDCT776OnboardPass(t *testing.T) {
 func TestSDCT776OnboardFailure(t *testing.T) {
 	t.Fatal("sdct776-onboard-failure: intentional deterministic CI and Test Visibility failure")
 }
+
+func groupTest(t *testing.T, group, message string) {
+	if os.Getenv("SDCT776_GROUP") != group {
+		t.Skip("not part of this test-only group")
+	}
+	gotesting.GetTest(t).Fatal(message)
+}
+
+func TestRetryPolicy(t *testing.T) {
+	groupTest(t, "unit", "expected 3 attempts, got 1")
+}
+
+func TestRetryPolicyBackoff(t *testing.T) {
+	groupTest(t, "unit", "retry backoff did not advance")
+}
+
+func TestRetryPolicyBudget(t *testing.T) {
+	groupTest(t, "unit", "retry budget was exhausted too early")
+}
+
+func TestQueueRecovery(t *testing.T) {
+	groupTest(t, "integration", "queue did not resume after reconnect")
+}
+
+func TestQueueReconnect(t *testing.T) {
+	groupTest(t, "integration", "connection reset while waiting for queue")
+}
+
+func TestSDCT776NoJobContext(t *testing.T) {
+	if os.Getenv("SDCT776_NO_JOB_CONTEXT") != "1" {
+		t.Skip("not part of the no-job-context scenario")
+	}
+	gotesting.GetTest(t).Fatal("expected 3 attempts, got 1")
+}
+
+func TestSDCT776NewRepoFreshNewFlaky(t *testing.T) {
+	if os.Getenv("SDCT776_NEW_FLAKY_FAIL") == "1" {
+		gotesting.GetTest(t).Fatal("failed on 2 of 5 executions")
+	}
+}

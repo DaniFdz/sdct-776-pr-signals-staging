@@ -1,7 +1,9 @@
 name: SDCT-776 staging onboarding
 
+# The onboarding branch has already produced its required validation DM.
+# Scenario branches use their own workflow to keep Dani's bot DM unambiguous.
 on:
-  push:
+  workflow_dispatch:
 
 jobs:
   sdct776-onboard-pass:

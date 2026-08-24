@@ -1,0 +1,30 @@
+name: SDCT-776 Scenario 5 - New Flaky Test
+
+on:
+  push:
+    branches:
+      - dani.fernandez/sdct776-scenario5-new-flaky
+
+jobs:
+  unit-tests:
+    name: unit-tests
+    runs-on: ubuntu-latest
+    env:
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      DD_SITE: datad0g.com
+      DD_CIVISIBILITY_AGENTLESS_ENABLED: true
+      DD_SERVICE: sdct776-pr-signals
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+      - name: First execution fails for fresh test identity
+        continue-on-error: true
+        env:
+          SDCT776_FLAKY_FAIL: '1'
+        run: go test -tags=sdct776 -run '^TestFlakyPaymentGateway$' -v ./sdct776/scenarios
+      - name: Second execution passes for the same test identity
+        env:
+          SDCT776_FLAKY_FAIL: '0'
+        run: go test -tags=sdct776 -run '^TestFlakyPaymentGateway$' -v ./sdct776/scenarios

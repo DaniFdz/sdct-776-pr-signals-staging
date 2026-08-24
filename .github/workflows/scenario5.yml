@@ -19,7 +19,12 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: "1.21"
-      - name: Run newly flaky test (fails first, passes on retry)
-        run: |
-          go test -tags=sdct776 -run '^TestFreshFlakyCheckoutTransaction$' -v ./sdct776/scenarios || \
-          go test -tags=sdct776 -run '^TestFreshFlakyCheckoutTransaction$' -v ./sdct776/scenarios
+      - name: First execution with flaking test failure
+        continue-on-error: true
+        env:
+          SDCT776_FLAKY_FAIL: '1'
+        run: go test -tags=sdct776 -run '^TestNewFlakyPaymentGatewayV2$' -v ./sdct776/scenarios
+      - name: Second execution where flaking test passes but persistent test fails
+        env:
+          SDCT776_FLAKY_FAIL: '0'
+        run: go test -tags=sdct776 -run '^(TestNewFlakyPaymentGatewayV2|TestPersistentFailure)$' -v ./sdct776/scenarios

@@ -1,0 +1,35 @@
+name: SDCT-776 CI-only Multiple Jobs Failure
+
+on:
+  push:
+    branches:
+      - dani.fernandez/sdct776-ci-only-multi-jobs
+
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    env:
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      DD_SITE: datad0g.com
+      DD_CIVISIBILITY_AGENTLESS_ENABLED: true
+      DD_SERVICE: sdct776-pr-signals
+    steps:
+      - name: Linter check failure
+        run: |
+          echo "golangci-lint: unused variable retryCount found on main.go:42"
+          exit 1
+
+  build-linux:
+    name: build-linux
+    runs-on: ubuntu-latest
+    env:
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      DD_SITE: datad0g.com
+      DD_CIVISIBILITY_AGENTLESS_ENABLED: true
+      DD_SERVICE: sdct776-pr-signals
+    steps:
+      - name: Build failure
+        run: |
+          echo "go build failed: missing dependency"
+          exit 1

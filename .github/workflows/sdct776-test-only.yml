@@ -1,49 +1,26 @@
-name: SDCT-776 3A.1 test-only groups
+name: SDCT-776 3B.1 no-job-context test-only failure
 
 on:
   push:
 
 jobs:
-  unit-tests:
-    name: unit-tests
+  no-job-context:
+    name: no-job-context
     runs-on: ubuntu-latest
     env:
       DD_API_KEY: ${{ secrets.DD_API_KEY }}
       DD_SITE: datad0g.com
       DD_CIVISIBILITY_AGENTLESS_ENABLED: true
       DD_SERVICE: sdct776-pr-signals
-      # Separate environments preserve each job's test summary while service identity stays stable.
-      DD_ENV: sdct776-unit
-      SDCT776_GROUP: unit
+      SDCT776_NO_JOB_CONTEXT: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
           go-version: "1.21"
-      - name: Record unit test failures without failing the job
+      - name: Record a failed test without CI job context
         continue-on-error: true
-        run: go test -tags=sdct776 -run '^(TestRetryPolicy|TestRetryPolicyBackoff|TestRetryPolicyBudget)$' -v ./sdct776/scenarios
-      - name: Keep unit job successful
-        run: echo "The failed test data is intentionally test-only."
-
-  integration-tests:
-    name: integration-tests
-    runs-on: ubuntu-latest
-    env:
-      DD_API_KEY: ${{ secrets.DD_API_KEY }}
-      DD_SITE: datad0g.com
-      DD_CIVISIBILITY_AGENTLESS_ENABLED: true
-      DD_SERVICE: sdct776-pr-signals
-      # Separate environments preserve each job's test summary while service identity stays stable.
-      DD_ENV: sdct776-integration
-      SDCT776_GROUP: integration
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version: "1.21"
-      - name: Record integration test failures without failing the job
-        continue-on-error: true
-        run: go test -tags=sdct776 -run '^(TestQueueRecovery|TestQueueReconnect)$' -v ./sdct776/scenarios
-      - name: Keep integration job successful
-        run: echo "The failed test data is intentionally test-only."
+        # Preserve GitHub pipeline metadata but remove only the test process's job label.
+        run: env -u GITHUB_JOB go test -tags=sdct776 -run '^TestSDCT776NoJobContext$' -v ./sdct776/scenarios
+      - name: Keep the test-only job successful
+        run: echo "The failed test has no CI job context."

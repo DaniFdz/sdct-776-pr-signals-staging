@@ -47,3 +47,10 @@ func TestQueueRecovery(t *testing.T) {
 func TestQueueReconnect(t *testing.T) {
 	groupTest(t, "integration", "connection reset while waiting for queue")
 }
+
+func TestSDCT776NoJobContext(t *testing.T) {
+	if os.Getenv("SDCT776_NO_JOB_CONTEXT") != "1" {
+		t.Skip("not part of the no-job-context scenario")
+	}
+	gotesting.GetTest(t).Fatal("expected 3 attempts, got 1")
+}

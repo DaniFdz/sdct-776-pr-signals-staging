@@ -1,0 +1,21 @@
+name: SDCT-776 2.1 CI-only failure
+
+on:
+  push:
+    branches:
+      - dani.fernandez/sdct776-newrepo-ci-only
+
+jobs:
+  ci-only:
+    name: sdct776-ci-only
+    runs-on: ubuntu-latest
+    env:
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      DD_SITE: datad0g.com
+      DD_CIVISIBILITY_AGENTLESS_ENABLED: true
+      DD_SERVICE: sdct776-pr-signals
+    steps:
+      - name: Emit deterministic CI-only failure
+        run: |
+          echo "SDCT-776 scenario 2.1: intentional CI-only job failure"
+          exit 1

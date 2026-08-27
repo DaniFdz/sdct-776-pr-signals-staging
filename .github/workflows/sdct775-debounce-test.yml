@@ -1,0 +1,62 @@
+name: SDCT-775 rolling debounce verification
+
+on:
+  push:
+    branches:
+      - dani.fernandez/sdct775-debounce-test
+  pull_request:
+
+jobs:
+  fast-job:
+    name: sdct775-fast-job
+    runs-on: ubuntu-latest
+    env:
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      DD_SITE: datad0g.com
+      DD_CIVISIBILITY_AGENTLESS_ENABLED: true
+      DD_SERVICE: sdct776-pr-signals
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+      - name: Fast failure after 1s
+        run: |
+          sleep 1
+          go test -tags=sdct776 -run '^TestRetryPolicy$' -v ./sdct776/scenarios
+
+  medium-job:
+    name: sdct775-medium-job
+    runs-on: ubuntu-latest
+    env:
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      DD_SITE: datad0g.com
+      DD_CIVISIBILITY_AGENTLESS_ENABLED: true
+      DD_SERVICE: sdct776-pr-signals
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+      - name: Medium failure after 20s
+        run: |
+          sleep 20
+          go test -tags=sdct776 -run '^TestRetryPolicyBackoff$' -v ./sdct776/scenarios
+
+  long-job:
+    name: sdct775-long-job
+    runs-on: ubuntu-latest
+    env:
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      DD_SITE: datad0g.com
+      DD_CIVISIBILITY_AGENTLESS_ENABLED: true
+      DD_SERVICE: sdct776-pr-signals
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+      - name: Long failure after 120s
+        run: |
+          sleep 120
+          go test -tags=sdct776 -run '^TestRetryPolicyBudget$' -v ./sdct776/scenarios

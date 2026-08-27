@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - dani.fernandez/sdct776-scenario1-single-test
+  pull_request:
 
 jobs:
   unit-tests:

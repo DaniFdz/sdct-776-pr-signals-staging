@@ -1,0 +1,55 @@
+name: SDCT-776 Scenario 7 - Three Jobs With Failures
+
+on:
+  push:
+    branches:
+      - dani.fernandez/sdct776-scenario7-three-jobs
+
+jobs:
+  unit-tests:
+    name: unit-tests
+    runs-on: ubuntu-latest
+    env:
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      DD_SITE: datad0g.com
+      DD_CIVISIBILITY_AGENTLESS_ENABLED: true
+      DD_SERVICE: sdct776-pr-signals
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+      - name: Run unit tests
+        run: go test -tags=sdct776 -run '^TestUnitAuth$' -v ./sdct776/scenarios
+
+  integration-tests:
+    name: integration-tests
+    runs-on: ubuntu-latest
+    env:
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      DD_SITE: datad0g.com
+      DD_CIVISIBILITY_AGENTLESS_ENABLED: true
+      DD_SERVICE: sdct776-pr-signals
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+      - name: Run integration tests
+        run: go test -tags=sdct776 -run '^TestIntegrationDB$' -v ./sdct776/scenarios
+
+  e2e-tests:
+    name: e2e-tests
+    runs-on: ubuntu-latest
+    env:
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      DD_SITE: datad0g.com
+      DD_CIVISIBILITY_AGENTLESS_ENABLED: true
+      DD_SERVICE: sdct776-pr-signals
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+      - name: Run e2e tests
+        run: go test -tags=sdct776 -run '^TestE2ECheckout$' -v ./sdct776/scenarios

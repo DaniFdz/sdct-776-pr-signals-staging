@@ -1,12 +1,14 @@
-name: SDCT-776 1.1 correlated non-flaky failures
+name: Test PR Signals Links In Error Messages
 
 on:
   push:
     branches:
-      - dani.fernandez/sdct776-newrepo-correlated
+      - dani.fernandez/test-object-is-links
+  pull_request:
 
 jobs:
-  sdct776-correlated:
+  unit-test-packages:
+    name: unit-test-packages
     runs-on: ubuntu-latest
     env:
       DD_API_KEY: ${{ secrets.DD_API_KEY }}
@@ -18,5 +20,6 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: "1.21"
-      - name: Run three intentional non-flaky failures
-        run: go test -tags=sdct776 -run '^TestRetryPolicy' -v ./sdct776/scenarios
+      - name: Run test
+        run: |
+          go test -tags=sdct776 -v ./sdct776/scenarios -run '^TestObjectIsEquality$'

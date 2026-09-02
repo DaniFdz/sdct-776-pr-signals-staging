@@ -13,10 +13,6 @@ func TestMain(m *testing.M) {
 	os.Exit(gotesting.RunM(m))
 }
 
-func TestSDCT776OnboardPass(t *testing.T) {
-	t.Log("sdct776-onboard-pass: intentional passing Test Visibility scenario")
-}
-
-func TestSDCT776OnboardFailure(t *testing.T) {
-	t.Fatal("sdct776-onboard-failure: intentional deterministic CI and Test Visibility failure")
+func TestObjectIsEquality(t *testing.T) {
+	gotesting.GetTest(t).Fatal("expect(received).toBe(expected) // Object.is equality\n\nExpected: \"CVE-2023-44270\"\nReceived: undefined\n\nIgnored nodes: comments, script, style")
 }

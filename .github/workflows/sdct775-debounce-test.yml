@@ -1,6 +1,7 @@
 name: SDCT-775 rolling debounce verification
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - dani.fernandez/sdct775-debounce-test

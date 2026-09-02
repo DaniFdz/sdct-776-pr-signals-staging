@@ -9,7 +9,7 @@ import (
 )
 
 func TestRetryPolicy(t *testing.T) {
-	gotesting.GetTest(t).Fatal("expected 3 retry attempts, got 1")
+	gotesting.GetTest(t).Fatal("expect(received).toBe(expected) // Object.is equality\n\nExpected: \"CVE-2023-44270\"\nReceived: undefined\n\nIgnored nodes: comments, script, style")
 }
 
 func TestRetryPolicyBackoff(t *testing.T) {

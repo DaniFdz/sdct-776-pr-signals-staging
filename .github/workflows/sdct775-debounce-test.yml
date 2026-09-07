@@ -9,7 +9,7 @@ on:
 
 jobs:
   fast-job:
-    name: sdct775-fast-job
+    name: fast-job
     runs-on: ubuntu-latest
     env:
       DD_API_KEY: ${{ secrets.DD_API_KEY }}
@@ -27,7 +27,7 @@ jobs:
           go test -tags=sdct776 -run '^TestRetryPolicy$' -v ./sdct776/scenarios
 
   medium-job:
-    name: sdct775-medium-job
+    name: medium-job
     runs-on: ubuntu-latest
     env:
       DD_API_KEY: ${{ secrets.DD_API_KEY }}
@@ -45,7 +45,7 @@ jobs:
           go test -tags=sdct776 -run '^TestRetryPolicyBackoff$' -v ./sdct776/scenarios
 
   long-job:
-    name: sdct775-long-job
+    name: long-job
     runs-on: ubuntu-latest
     env:
       DD_API_KEY: ${{ secrets.DD_API_KEY }}

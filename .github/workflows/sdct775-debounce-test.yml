@@ -3,9 +3,6 @@ name: SDCT-775 rolling debounce verification
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - dani.fernandez/sdct775-debounce-test
   pull_request:
 
 jobs:
@@ -62,3 +59,6 @@ jobs:
         run: |
           sleep 245
           go test -tags=sdct776 -run '^TestRetryPolicyBudget$' -v ./sdct776/scenarios
+      - name: Ingestion buffer for test telemetry
+        if: always()
+        run: sleep 45

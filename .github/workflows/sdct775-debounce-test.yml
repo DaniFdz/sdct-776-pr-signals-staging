@@ -1,0 +1,64 @@
+name: SDCT-775 rolling debounce verification
+# Test run: all 3 jobs required in branch protection (fast 60s, medium 65s, long 245s)
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  fast-job:
+    name: fast-job
+    runs-on: ubuntu-latest
+    env:
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      DD_SITE: datad0g.com
+      DD_CIVISIBILITY_AGENTLESS_ENABLED: true
+      DD_SERVICE: sdct776-pr-signals
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+      - name: Fast failure after 60s (Required)
+        run: |
+          sleep 60
+          go test -tags=sdct776 -run '^TestRetryPolicy$' -v ./sdct776/scenarios
+
+  medium-job:
+    name: medium-job
+    runs-on: ubuntu-latest
+    env:
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      DD_SITE: datad0g.com
+      DD_CIVISIBILITY_AGENTLESS_ENABLED: true
+      DD_SERVICE: sdct776-pr-signals
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+      - name: Medium failure after 65s (5s after fast)
+        run: |
+          sleep 65
+          go test -tags=sdct776 -run '^TestRetryPolicyBackoff$' -v ./sdct776/scenarios
+
+  long-job:
+    name: long-job
+    runs-on: ubuntu-latest
+    env:
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      DD_SITE: datad0g.com
+      DD_CIVISIBILITY_AGENTLESS_ENABLED: true
+      DD_SERVICE: sdct776-pr-signals
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+      - name: Long failure after 245s (3m after medium)
+        run: |
+          sleep 245
+          go test -tags=sdct776 -run '^TestRetryPolicyBudget$' -v ./sdct776/scenarios
+      - name: Ingestion buffer for test telemetry
+        if: always()
+        run: sleep 45

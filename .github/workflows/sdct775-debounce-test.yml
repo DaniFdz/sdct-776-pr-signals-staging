@@ -1,4 +1,5 @@
 name: SDCT-775 rolling debounce verification
+# Test run: all 3 jobs required in branch protection (fast 60s, medium 65s, long 245s)
 
 on:
   workflow_dispatch:

@@ -21,9 +21,9 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: "1.21"
-      - name: Fast failure after 1s (Required)
+      - name: Fast failure after 60s (Required)
         run: |
-          sleep 1
+          sleep 60
           go test -tags=sdct776 -run '^TestRetryPolicy$' -v ./sdct776/scenarios
 
   medium-job:
@@ -39,9 +39,9 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: "1.21"
-      - name: Medium failure after 20s (Optional)
+      - name: Medium failure after 90s (30s after fast)
         run: |
-          sleep 20
+          sleep 90
           go test -tags=sdct776 -run '^TestRetryPolicyBackoff$' -v ./sdct776/scenarios
 
   long-job:
@@ -57,7 +57,7 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: "1.21"
-      - name: Long failure after 40s (Optional)
+      - name: Long failure after 270s (3m after medium)
         run: |
-          sleep 40
+          sleep 270
           go test -tags=sdct776 -run '^TestRetryPolicyBudget$' -v ./sdct776/scenarios

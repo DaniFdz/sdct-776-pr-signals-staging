@@ -5,8 +5,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  recovery-job:
-    name: recovery-job
+  fast-job:
+    name: fast-job
     runs-on: ubuntu-latest
     env:
       DD_API_KEY: ${{ secrets.DD_API_KEY }}

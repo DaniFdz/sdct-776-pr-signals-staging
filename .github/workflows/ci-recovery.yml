@@ -1,0 +1,20 @@
+name: CI Job Recovery Verification
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  fast-job:
+    name: fast-job
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: CI job execution
+        run: |
+          if [ "${{ github.run_attempt }}" -eq "1" ]; then
+            echo "Attempt 1: intentional CI job failure for recovery test"
+            exit 1
+          fi
+          echo "Attempt 2: CI job passed on manual retry"
+          exit 0

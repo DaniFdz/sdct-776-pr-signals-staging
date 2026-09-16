@@ -1,4 +1,4 @@
-name: SDCT-770 recovery verification
+name: Verify Last Updated At and Recovery flow
 
 on:
   pull_request:

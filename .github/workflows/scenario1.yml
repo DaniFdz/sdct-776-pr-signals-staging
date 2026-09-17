@@ -1,0 +1,24 @@
+name: SDCT-776 Scenario 1 - Single Test Failure
+
+on:
+  push:
+    branches:
+      - dani.fernandez/sdct776-scenario1-single-test
+  pull_request:
+
+jobs:
+  unit-tests:
+    name: unit-tests
+    runs-on: ubuntu-latest
+    env:
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      DD_SITE: datad0g.com
+      DD_CIVISIBILITY_AGENTLESS_ENABLED: true
+      DD_SERVICE: sdct776-pr-signals
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+      - name: Run single test failure
+        run: go test -tags=sdct776 -run '^TestSingleFailure$' -v ./sdct776/scenarios

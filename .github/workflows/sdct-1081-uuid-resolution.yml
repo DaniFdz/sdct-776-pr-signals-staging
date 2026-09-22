@@ -1,7 +1,12 @@
 name: SDCT-1081 verify Datadog-UUID author resolution sends a PR signal
 
 on:
-  pull_request:
+  # push (not pull_request): GitHub reports CI Visibility telemetry for the PR
+  # merge commit, which the signal producer does not query. On push the commit is
+  # the branch head, which is what the producer looks up.
+  push:
+    branches:
+      - dani.fernandez/sdct-1081-uuid-resolution-test
   workflow_dispatch:
 
 jobs:

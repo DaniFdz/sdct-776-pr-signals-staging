@@ -5,8 +5,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  sdct1081-required-failure:
-    name: sdct1081-required-failure
+  # The job name must match a required status check context on main, otherwise
+  # the producer filters the failure out as non-required and no signal is sent.
+  fast-test-job:
+    name: fast-test-job
     runs-on: ubuntu-latest
     env:
       DD_API_KEY: ${{ secrets.DD_API_KEY }}
@@ -21,4 +23,5 @@ jobs:
       - name: Required failing test (no continue-on-error)
         run: go test -tags=sdct776 -run '^TestSDCT776OnboardFailure$' -v ./sdct776/scenarios
       - name: Ingestion buffer for test telemetry
-        run: sleep 20
+        if: always()
+        run: sleep 60

@@ -1,4 +1,4 @@
-name: SDCT-1081 verify Datadog-UUID author resolution sends a PR signal
+name: XPQG-2348 verify PR insights after the Retriever execution-mode migration
 
 on:
   # push (not pull_request): GitHub reports CI Visibility telemetry for the PR
@@ -6,7 +6,7 @@ on:
   # the branch head, which is what the producer looks up.
   push:
     branches:
-      - dani.fernandez/sdct-1081-uuid-resolution-test
+      - dani.fernandez/xpqg-2348-pr-insights-test
   workflow_dispatch:
 
 jobs:

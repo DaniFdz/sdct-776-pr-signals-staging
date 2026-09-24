@@ -1,0 +1,32 @@
+name: XPQG-2348 verify PR insights after the Retriever execution-mode migration
+
+on:
+  # push (not pull_request): GitHub reports CI Visibility telemetry for the PR
+  # merge commit, which the signal producer does not query. On push the commit is
+  # the branch head, which is what the producer looks up.
+  push:
+    branches:
+      - dani.fernandez/xpqg-2348-pr-insights-test
+  workflow_dispatch:
+
+jobs:
+  # The job name must match a required status check context on main, otherwise
+  # the producer filters the failure out as non-required and no signal is sent.
+  fast-test-job:
+    name: fast-test-job
+    runs-on: ubuntu-latest
+    env:
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      DD_SITE: datad0g.com
+      DD_CIVISIBILITY_AGENTLESS_ENABLED: true
+      DD_SERVICE: sdct776-pr-signals
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+      - name: Required failing test (no continue-on-error)
+        run: go test -tags=sdct776 -run '^TestSDCT776OnboardFailure$' -v ./sdct776/scenarios
+      - name: Ingestion buffer for test telemetry
+        if: always()
+        run: sleep 60

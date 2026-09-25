@@ -1,0 +1,28 @@
+name: SDCT-1097 verify non-required test failures do not send PR signal
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  optional-test-job:
+    name: optional-test-job
+    runs-on: ubuntu-latest
+    env:
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      DD_SITE: datad0g.com
+      DD_CIVISIBILITY_AGENTLESS_ENABLED: true
+      DD_SERVICE: sdct776-pr-signals
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+      - name: Run failing test
+        continue-on-error: true
+        run: |
+          go test -tags=sdct776 -run '^TestSDCT776OnboardFailure$' -v ./sdct776/scenarios
+      - name: Ingestion buffer for test telemetry
+        run: sleep 10
+      - name: Wait 5 minutes to verify no PR signal notification is sent
+        run: sleep 300

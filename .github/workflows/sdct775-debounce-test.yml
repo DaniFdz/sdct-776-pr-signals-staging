@@ -1,0 +1,87 @@
+name: PR-signal edit debounce verification
+# Phase 1: fast-job fails first, so the initial DM goes out about a minute later.
+# Phase 2: medium-job and long-job fail 15s apart once that DM exists: two signals,
+#          one debounced edit (the first delayed check gives way as edit_superseded).
+# Phase 3: late-job fails on its own a few minutes later: one more edit.
+# Display names reuse main's required checks (fast-test-job, slow-build-job):
+# failures of non-required jobs never produce a PR signal.
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  fast-job:
+    name: fast-test-job
+    runs-on: ubuntu-latest
+    env:
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      DD_SITE: datad0g.com
+      DD_CIVISIBILITY_AGENTLESS_ENABLED: true
+      DD_SERVICE: sdct776-pr-signals
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+      - name: Phase 1 failure after 5s
+        run: |
+          sleep 5
+          go test -tags=sdct776 -run '^TestRetryPolicy$' -v ./sdct776/scenarios
+
+  medium-job:
+    name: slow-build-job
+    runs-on: ubuntu-latest
+    env:
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      DD_SITE: datad0g.com
+      DD_CIVISIBILITY_AGENTLESS_ENABLED: true
+      DD_SERVICE: sdct776-pr-signals
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+      - name: Phase 2 failure after 240s (DM already sent)
+        run: |
+          sleep 240
+          go test -tags=sdct776 -run '^TestRetryPolicyBackoff$' -v ./sdct776/scenarios
+
+  long-job:
+    name: slow-build-job
+    runs-on: ubuntu-latest
+    env:
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      DD_SITE: datad0g.com
+      DD_CIVISIBILITY_AGENTLESS_ENABLED: true
+      DD_SERVICE: sdct776-pr-signals
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+      - name: Phase 2 failure after 255s (15s after medium-job)
+        run: |
+          sleep 255
+          go test -tags=sdct776 -run '^TestRetryPolicyBudget$' -v ./sdct776/scenarios
+
+  late-job:
+    name: fast-test-job
+    runs-on: ubuntu-latest
+    env:
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      DD_SITE: datad0g.com
+      DD_CIVISIBILITY_AGENTLESS_ENABLED: true
+      DD_SERVICE: sdct776-pr-signals
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+      - name: Phase 3 failure after 480s (its own burst)
+        run: |
+          sleep 480
+          go test -tags=sdct776 -run '^TestSDCT776OnboardFailure$' -v ./sdct776/scenarios
+      - name: Ingestion buffer for test telemetry
+        if: always()
+        run: sleep 10
